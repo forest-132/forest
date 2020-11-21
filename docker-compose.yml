@@ -1,0 +1,66 @@
+version: "3.3"
+
+services:
+  Elasticsearch:
+    restart: always
+    image: elasticsearch:7.9.3
+    hostname: Elasticsearch
+    networks:
+      - one
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - xpack.ml.enabled=false
+      - cluster.name=log-system
+      - bootstrap.memory_lock=true
+      - node.name=node_1
+      - discovery.type=single-node
+      - ES_JAVA_OPTS = "-Xms512m -Xmx512m"
+    volumes:
+      - /home/forest/ELK/elasticsearch/data/:/usr/share/elasticsearch/data/
+
+  Kibana:
+    image: kibana:7.9.3
+    restart: always
+    hostname: Kibana
+    environment:
+      - ES_JAVA_OPTS = "-Xms512m -Xmx512m"
+    networks:
+      - one
+    ports:
+      - "5601:5601"
+    volumes:
+      - kibana_conf:/kibana
+
+  Logstash:
+    image: logstash:7.9.3
+    restart: always
+    hostname: Logstash
+    environment:
+      - ES_JAVA_OPTS = "-Xms512m -Xmx512m"
+
+    ports:
+      - "9600:9600"
+      - "5044:5044"
+    networks:
+      - one
+
+    volumes:
+      - /home/forest/ELK/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - /home/forest/ELK/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
+      - /home/forest/ELK/logstash:/usr/share/logstash/config/pipelines:ro
+      - /home/forest/ELK/logstash/patterns:/usr/share/logstash/patterns
+    depends_on:
+      - Elasticsearch
+
+networks:
+  one:
+    driver: bridge
+
+volumes:
+  kibana_conf: {}
