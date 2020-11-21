@@ -1,0 +1,24 @@
+## Default Logstash configuration from logstash-docker.
+## from https://github.com/elastic/logstash-docker/blob/master/build/logstash/config/logstash.yml
+#
+node.name: network
+http.host: "0.0.0.0"
+
+## Disable X-Pack
+## see https://www.elastic.co/guide/en/x-pack/current/xpack-settings.html
+##     https://www.elastic.co/guide/en/x-pack/current/installing-xpack.html#xpack-enabling
+#
+config.reload.automatic: true
+config.reload.interval: 3s
+
+##Test Comment
+
+
+#log.level: debug
+#xpack.monitoring.enabled: true
+#xpack.monitoring.elasticsearch.username: {{ xpack_user }}
+#xpack.monitoring.elasticsearch.password: {{ xpack_password }}
+xpack.monitoring.elasticsearch.hosts: [ "http://Elasticsearch:9200" ]
+#xpack.monitoring.elasticsearch.ssl.certificate_authority: "/usr/share/logstash/config/ca-cert.pem"
+xpack.monitoring.collection.pipeline.details.enabled: true
+
